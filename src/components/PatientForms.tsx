@@ -1,12 +1,18 @@
 import { useForm } from "react-hook-form"
 import Errors from "./Errors"
+import type { DraftPatient, Patient } from "../types"
+import { usePatientStore } from "../store/store"
+
+
 
 export default function PatientForms() {
 
-    const { register, handleSubmit, formState: {errors} } = useForm()
-    
-    const registerPatient = () => {
+    const { addPatient } = usePatientStore()
 
+    const { register, handleSubmit, formState: {errors} } = useForm<DraftPatient>() //Necesita el tipo para que al registrar el form tenga el type de la funcion 
+    
+    const registerPatient = (data : DraftPatient) => {
+        addPatient(data)
     }
   
     return (
@@ -21,7 +27,7 @@ export default function PatientForms() {
             <form 
                 className="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
                 noValidate
-                onSubmit={handleSubmit(registerPatient)}
+                onSubmit={handleSubmit(registerPatient)} //Si hay errores no se ejecutará, por tener el form implícito, rellena errors
             >
                 <div className="mb-5">
                     <label htmlFor="name" className="text-sm uppercase font-bold">
@@ -33,13 +39,13 @@ export default function PatientForms() {
                         type="text" 
                         placeholder="Nombre del Paciente" 
                         autoComplete="off"
-                        {...register('name', {                                             //Función register del hook useForm
+                        {...register('name', {                                          //Función register del hook useForm
                             required: 'El nombre del paciente es obligatorio',      
                         })}
                     />
 
                     {errors.name && (
-                        <Errors>{errors.name?.message?.toString()}</Errors>
+                        <Errors>{errors.name?.message}</Errors>
                     )}                  
                             
                 </div>
@@ -59,7 +65,7 @@ export default function PatientForms() {
                         })}
                     />
                     {errors.caretaker && (
-                        <Errors>{errors.caretaker?.message?.toString()}</Errors>
+                        <Errors>{errors.caretaker?.message}</Errors>
                     )}
 
                 </div>
@@ -83,7 +89,7 @@ export default function PatientForms() {
                     })} 
                 />
                 {errors.email && (
-                        <Errors>{errors.email?.message?.toString()}</Errors>                 
+                        <Errors>{errors.email?.message}</Errors>                 
                 )}
                 </div>
 
@@ -100,7 +106,7 @@ export default function PatientForms() {
                         })}
                     />
                     {errors.date && (
-                        <Errors>{errors.date?.message?.toString()}</Errors>
+                        <Errors>{errors.date?.message}</Errors>
                     )}
                     
                 </div>
@@ -121,7 +127,7 @@ export default function PatientForms() {
                     ></textarea>
 
                     {errors.symptoms && (
-                        <Errors>{errors.symptoms?.message?.toString()}</Errors>
+                        <Errors>{errors.symptoms?.message}</Errors>
                     )}
 
                 </div>
