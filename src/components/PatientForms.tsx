@@ -2,18 +2,32 @@ import { useForm } from "react-hook-form"
 import Errors from "./Errors"
 import type { DraftPatient, Patient } from "../types"
 import { usePatientStore } from "../store/store"
+import { useEffect } from "react"
 
 
 
 export default function PatientForms() {
 
-    const { addPatient } = usePatientStore()
+    const { addPatient, activeId, patients } = usePatientStore()
 
-    const { register, handleSubmit, formState: {errors} } = useForm<DraftPatient>() //Necesita el tipo para que al registrar el form tenga el type de la funcion 
+    const { register, handleSubmit, setValue, formState: {errors}, reset } = useForm<DraftPatient>() //Necesita el tipo para que al registrar el form tenga el type de la funcion 
     
     const registerPatient = (data : DraftPatient) => {
         addPatient(data)
+
+        reset()
     }
+
+    useEffect(()=>{
+        if(activeId){
+            const activePatient = patients.filter( patient => patient.id === activeId)[0]
+            setValue('name', activePatient.name)
+            setValue('caretaker', activePatient.caretaker)
+            setValue('email', activePatient.email)
+            setValue('date', activePatient.date)
+            setValue('symptoms', activePatient.symptoms)
+        }
+    }, [activeId])
   
     return (
         <div className="md:w-1/2 lg:w-2/5 mx-5">
